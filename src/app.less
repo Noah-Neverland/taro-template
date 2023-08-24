@@ -1,0 +1,93 @@
+:root,
+page {
+  font-family:
+    PingFang SC,
+    PingFangSC-Regular !important;
+  background-color: @bg-color;
+}
+
+html,
+body {
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC !important;
+}
+
+.h5-span {
+  display: inline; // 基于@tarojs/plugin-html 兼容h5
+}
+
+.taro_router .taro_page {
+  background-color: @bg-color !important;
+}
+
+.taro__toast {
+  p {
+    font-size: 32px !important;
+  }
+}
+
+.teach-cover {
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.font-PM {
+  font-family:
+    PingFangSC-Medium,
+    PingFang SC;
+}
+
+.van-dialog__confirm {
+  color: @main-color !important;
+}
+
+.vant-form-formItem-controll-item {
+  justify-content: flex-end !important;
+  text-align: right;
+}
+
+.vant-form-message-show {
+  text-align: right;
+}
+
+.van-picker__confirm {
+  color: @main-color !important;
+}
+
+.van-calendar__confirm {
+  border-radius: 100px !important;
+}
+
+.taro-textarea {
+  text-align: right;
+  color: inherit;
+  font-size: inherit;
+  width: 100% !important;
+  height: 80px !important;
+  font-family:
+    PingFangSC-Regular,
+    PingFang SC !important;
+}
+
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 2px; /*高宽分别对应横竖滚动条的尺寸*/
+  // height: 7px;
+}
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: @main-color;
+}
+
+// ::-webkit-scrollbar-track {
+//   /*滚动条里面轨道*/
+//   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+//   border-radius: 10px;
+//   background: transparent;
+// }

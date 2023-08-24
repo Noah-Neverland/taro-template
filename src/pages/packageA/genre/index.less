@@ -1,0 +1,43 @@
+.genre {
+  &-title {
+    font-size: 46px;
+    font-weight: bold;
+    padding: 127px 0 60px 50px;
+    background: url('../../../assets/images/genre/genre_bg_01.jpg') no-repeat top center;
+    background-size: cover;
+  }
+  &-items {
+    &-main {
+      width: 650px;
+      height: 220px;
+      margin: 20px auto 0;
+      display: flex;
+      align-items: center;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #d0d0d0;
+      &-left {
+        flex: 0 0 220px;
+        height: 220px;
+        margin-right: 14px;
+      }
+      &-right {
+        &-title {
+          font-size: 34px;
+          color: #111111;
+          font-weight: bold;
+        }
+        &-subtitle {
+          font-size: 24px;
+          line-height: 33px;
+          color: #647288;
+          margin: 14px 0 6px 0;
+        }
+        &-popup {
+          color: @main-color;
+          font-size: 24px;
+        }
+      }
+    }
+  }
+}

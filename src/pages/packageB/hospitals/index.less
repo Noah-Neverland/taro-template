@@ -1,0 +1,47 @@
+.hospitals {
+  box-sizing: border-box;
+  &-search {
+    .nut-searchbar__content {
+      /* prettier-ignore */
+      border: 1Px solid @main-color;
+      border-radius: 12px;
+    }
+  }
+  &-content {
+    margin: 20px;
+    height: 180px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px 24px 20px 24px;
+    &-head {
+      &-left {
+        width: 90px;
+        height: 90px;
+        margin-right: 16px;
+      }
+      &-right {
+        flex: 1;
+        &-title {
+          font-size: 32px;
+          font-weight: bold;
+        }
+      }
+    }
+    &-footer {
+      margin-top: 20px;
+      &-left {
+        font-size: 24px;
+        color: @gray-01;
+        padding-left: 48px;
+        background: url('../../../assets/images/comoon/map_icon_01.png') no-repeat left center;
+        background-size: contain;
+      }
+      &-right {
+        .nut-button--small {
+          width: 158px;
+          height: 60px;
+        }
+      }
+    }
+  }
+}

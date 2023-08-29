@@ -29,6 +29,7 @@ export default function PickerBox(props: any) {
   }, []);
 
   const onConfirm = react.useCallback((e) => {
+    props.cofirmCallback && props.cofirmCallback(e);
     if (props.onConfirm) props.onConfirm(e);
     toggleShow(false);
   }, []);

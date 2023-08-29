@@ -1,11 +1,11 @@
-import react, { FC, memo, useImperativeHandle, useEffect, useState } from 'react';
+import react, { FC, memo, useImperativeHandle, useEffect } from 'react';
 import { Form, Day, Icon, Toast, Cell } from '@antmjs/vantui';
 import { View } from '@tarojs/components';
 import FormRenderNew from '@/components/FormRender';
+import { useAppSelector } from '@/hooks/store';
 import { isPhone, isCardNo } from '@/utils/is';
 import { IdCard } from '@/utils';
 import dayjs from 'dayjs';
-import { GetHospital, GetCommunity } from '@/api/index';
 import './index.less';
 
 const AToast = Toast.createOnlyToast();
@@ -19,8 +19,8 @@ const basicFields = [
 ];
 
 const reserveFields = [
-  { title: '预约医院', value: 'hospital' },
-  { title: '预约日期', value: 'date' },
+  { title: '预约医院', value: 'hospitalName' },
+  { title: '预约日期', value: 'booking' },
 ];
 
 const DetailItems: FC<any> = memo(({ fields, values }) => {
@@ -35,11 +35,12 @@ const DetailItems: FC<any> = memo(({ fields, values }) => {
 
 // 基本信息
 export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType }) => {
-  const [community, setCommunity] = useState([]);
   const formIt = Form.useForm();
 
+  const community = useAppSelector((state) => state.genreConfigSlice.communitys);
+
   useEffect(() => {
-    if (!isDetail) getCommunity();
+    if (JSON.stringify(detailInfo) !== '{}') formIt.setFields({ ...detailInfo });
   }, [formIt, detailInfo, isDetail]);
 
   useImperativeHandle(bRef, () => ({
@@ -75,19 +76,6 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
     };
   }, [formIt.getFieldValue('card')]);
 
-  // 获取社区信息
-  const getCommunity = async () => {
-    const res: any = await GetCommunity();
-    let arr = [];
-    arr = res.map((item: any) => {
-      return {
-        value: item.id,
-        text: item.name,
-      };
-    });
-    setCommunity(arr);
-  };
-
   return (
     <>
       <View className="applyform">
@@ -106,9 +94,8 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
                   borderBottom: true,
                   props: {
                     maxlength: 50,
-                    disabled: isDetail,
                   },
-                  required: !isDetail,
+                  required: true,
                 },
                 {
                   fields: 'identityCard',
@@ -116,10 +103,7 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
                   type: 'input',
                   borderBottom: true,
                   rules: dynamicCardRule,
-                  props: {
-                    disabled: isDetail,
-                  },
-                  required: !isDetail,
+                  required: true,
                 },
                 {
                   fields: 'phone',
@@ -127,24 +111,7 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
                   type: 'inputNumber',
                   borderBottom: true,
                   rules: dynamicPhoneRule,
-                  props: {
-                    disabled: isDetail,
-                  },
-                  required: !isDetail,
-                },
-                {
-                  fields: 'sex',
-                  label: '性别',
-                  type: 'picker',
-                  borderBottom: true,
-                  renderRight: <Icon name="arrow" />,
-                  props: {
-                    columns: [
-                      { value: 1, text: '男' },
-                      { value: 2, text: '女' },
-                    ],
-                  },
-                  required: !isDetail,
+                  required: true,
                 },
                 {
                   fields: 'communityId',
@@ -154,9 +121,8 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
                   renderRight: isDetail ? '' : <Icon name="arrow" />,
                   props: {
                     columns: community,
-                    clickable: !isDetail,
                   },
-                  required: !isDetail,
+                  required: true,
                 },
                 {
                   fields: 'address',
@@ -164,9 +130,9 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
                   type: 'inputTextArea',
                   props: {
                     maxlength: 100,
-                    disabled: isDetail,
+                    value: '123',
                   },
-                  required: !isDetail,
+                  required: true,
                 },
               ]}
             />
@@ -178,14 +144,15 @@ export const BasicForm: FC<any> = memo(({ bRef, detailInfo, isDetail, applyType 
 });
 
 // 预约信息
-export const ReserveForm: FC<any> = memo(({ bRef, children, detailInfo, isDetail, config }) => {
-  const [hospital, setHospital] = useState([]);
+export const ReserveForm: FC<any> = memo(({ bRef, children, detailInfo, isDetail }) => {
   const formIt = Form.useForm();
+
+  const { config, hospitals } = useAppSelector((state) => state.genreConfigSlice);
 
   useEffect(() => {
     // 查看详情时操作
-    if (!isDetail) getHospital();
-  }, [detailInfo, isDetail]);
+    if (JSON.stringify(detailInfo) !== '{}') formIt.setFields({ ...detailInfo });
+  }, [formIt, detailInfo, isDetail]);
 
   useImperativeHandle(bRef, () => ({
     onSubmit,
@@ -198,19 +165,6 @@ export const ReserveForm: FC<any> = memo(({ bRef, children, detailInfo, isDetail
         resolve(fieldValues);
       });
     });
-  };
-
-  // 医院信息
-  const getHospital = async () => {
-    const res: any = await GetHospital();
-    let arr = [];
-    arr = res.map((item: any) => {
-      return {
-        value: item.id,
-        text: item.name,
-      };
-    });
-    setHospital(arr);
   };
 
   return (
@@ -234,10 +188,15 @@ export const ReserveForm: FC<any> = memo(({ bRef, children, detailInfo, isDetail
                   borderBottom: true,
                   renderRight: isDetail ? '' : <Icon name="arrow" />,
                   props: {
-                    columns: hospital,
-                    clickable: !isDetail,
+                    columns: hospitals,
+                    cofirmCallback: (e) => {
+                      const oldValue = formIt.getFieldValue('hospitalName');
+                      if (oldValue !== e.detail.value.value) {
+                        formIt.setFieldsValue('booking', undefined);
+                      }
+                    },
                   },
-                  required: !isDetail,
+                  required: true,
                 },
                 {
                   fields: 'booking',

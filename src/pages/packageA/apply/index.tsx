@@ -2,10 +2,13 @@ import Taro, { useDidShow, useRouter } from '@tarojs/taro';
 import { useRef, FC, useState, useContext, createContext } from 'react';
 import { View, Text } from '@tarojs/components';
 import { Icon, Button, Toast, Image } from '@antmjs/vantui';
+import { useAppSelector, useAppDispatch } from '@/hooks/store';
 import setBarTitle from '@/utils/setBarTitle/set_bar_title';
+import { setConfig } from '@/redux/reducers/genreConfigSlice';
 import { APPLY_TITLE, APPLY_DOCUMENT_TITLE } from '@/constants';
 import { BasicForm, ReserveForm } from '@/components/CApplyForm';
-import { GetConfig, AddBooking, GetBookingDetail } from '@/api/index';
+import { AddBooking, GetBookingDetail } from '@/api/index';
+import { IdCard } from '@/utils';
 import './index.less';
 
 type ContextValueProps = {
@@ -13,10 +16,9 @@ type ContextValueProps = {
   isDetail: boolean;
   detailInfo: any;
   auditStatus: string | number;
-  config: object;
 };
 
-const ContextValue = createContext<ContextValueProps>({ applyType: 1, isDetail: false, detailInfo: {}, auditStatus: 1, config: {} });
+const ContextValue = createContext<ContextValueProps>({ applyType: 1, isDetail: false, detailInfo: {}, auditStatus: 1 });
 
 const AToast = Toast.createOnlyToast();
 
@@ -27,11 +29,23 @@ const ApplyForm: FC<any> = () => {
   const reserveRef = useRef<any>(null);
   const reserveSecondRef = useRef<any>(null);
 
-  const { applyType, isDetail, detailInfo, auditStatus, config } = parentValue;
-  const { firstHospital, firstTime, secondHospital, secondTime, choseHospital, choseTime } = detailInfo;
+  const { applyType, isDetail, detailInfo, auditStatus } = parentValue;
+  const editInfo = Taro.getStorageSync('editInfo') && JSON.parse(Taro.getStorageSync('editInfo'));
 
-  const firstForm = { hospital: auditStatus === 2 ? choseHospital : firstHospital, date: auditStatus === 2 ? choseTime : firstTime };
-  const secondForm = { hospital: secondHospital, date: secondTime };
+  let basicDetailInfo = isDetail ? detailInfo : editInfo;
+  let firstForm = {};
+  let secondForm = {};
+
+  const { firstHospital, firstTime, firstHospitalId, secondHospital, secondTime, secondHospitalId, choseHospital, choseTime } = basicDetailInfo;
+
+  if (isDetail) {
+    firstForm = { hospitalName: auditStatus === 2 ? choseHospital : firstHospital, booking: auditStatus === 2 ? choseTime : firstTime };
+    secondForm = { hospitalName: secondHospital, booking: secondTime };
+  } else if (editInfo) {
+    // 判断是否是重新预约（回填之前的数据）
+    firstForm = { hospitalName: firstHospitalId, booking: firstTime && firstTime.split('、') };
+    secondForm = { hospitalName: secondHospitalId, booking: secondTime && secondTime.split('、') };
+  }
 
   // 提交操作
   const onSubmit = async () => {
@@ -45,6 +59,7 @@ const ApplyForm: FC<any> = () => {
       ]);
       params = {
         ...basicInfo,
+        sex: IdCard(basicInfo.identityCard, 2) === '女' ? 2 : 1,
         firstId: reserveFirstInfo.hospitalName,
         firstTime: reserveFirstInfo.booking,
         secondId: reserveSecondInfo.hospitalName,
@@ -55,30 +70,34 @@ const ApplyForm: FC<any> = () => {
       if (reserveFirstInfo.hospitalName === reserveSecondInfo.hospitalName) return AToast.show('两次选择的医院相同');
     } else {
       const [basicInfo, reserveInfo] = await Promise.all([basicInfoRef.current.onSubmit(), reserveRef.current.onSubmit()]);
-      params = { ...basicInfo, firstId: reserveInfo.hospitalName, firstTime: reserveInfo.booking, type: applyType };
+      params = { ...basicInfo, sex: IdCard(basicInfo.identityCard, 2) === '女' ? 2 : 1, firstId: reserveInfo.hospitalName, firstTime: reserveInfo.booking, type: applyType };
     }
     // 调用接口
     await AddBooking(params);
+    // 提交成功清空编辑的详情信息
+    Taro.removeStorageSync('editInfo');
     // 提交成功跳转到申请记录列表页面
     Taro.reLaunch({ url: '/pages/index/index' });
   };
 
   // 重新预约
   const onReschedule = () => {
-    Taro.navigateTo({ url: '/pages/packageA/genre/index' });
+    // 将之前的信息带过去
+    Taro.setStorageSync('editInfo', JSON.stringify(detailInfo));
+    Taro.navigateTo({ url: `/pages/packageA/apply/index?applyType=${applyType}` });
   };
 
   return (
     <>
       {/* 基础信息 */}
-      <BasicForm bRef={basicInfoRef} isDetail={isDetail} detailInfo={detailInfo} applyType={applyType} />
+      <BasicForm bRef={basicInfoRef} isDetail={isDetail} detailInfo={basicDetailInfo} applyType={applyType} />
       {/* 预约信息 */}
-      <ReserveForm bRef={reserveRef} isDetail={isDetail} detailInfo={firstForm} config={config}>
+      <ReserveForm bRef={reserveRef} isDetail={isDetail} detailInfo={firstForm}>
         {(applyType as string) === '1' && auditStatus !== 2 && <Text>第一选择</Text>}
       </ReserveForm>
       {/* 第二选择 */}
       {(applyType as string) === '1' && auditStatus !== 2 && (
-        <ReserveForm bRef={reserveSecondRef} isDetail={isDetail} detailInfo={secondForm} config={config}>
+        <ReserveForm bRef={reserveSecondRef} isDetail={isDetail} detailInfo={secondForm}>
           <View>第二选择</View>
           <Text className="text-0.625rem text-#94A4B7">当第一选择医院已约满，系统将自动为您预约第二选择</Text>
         </ReserveForm>
@@ -105,12 +124,13 @@ const ApplyForm: FC<any> = () => {
 };
 
 // 女性两癌一筛体检预约
-const SsgPage: FC<any> = ({ qrCodeImg }) => {
+const SsgPage: FC<any> = () => {
+  const config = useAppSelector((state) => state.genreConfigSlice.config);
   return (
     <>
       <View className="apply-ssg">
         <View className="apply-ssg-qrcode">
-          <Image width="100%" height="100%" fit="cover" src={qrCodeImg} />
+          <Image width="100%" height="100%" fit="cover" src={config.picPath} />
         </View>
         <View className="apply-ssg-subtitle">请预约扫码二维码</View>
         <View className="apply-ssg-subtitle">登记个人信息进行预约</View>
@@ -172,36 +192,26 @@ const Process: FC<any> = ({ auditStatus, detailInfo }) => {
 // 区分申请类型 根据type来判断
 // 判断是申请还是查询进度或者详情 根据id来判断
 export default function Apply() {
-  const [config, setConfig] = useState<object>({}); // 配置信息
   const [detailInfo, setDetailInfo] = useState<object>({}); // 预约详情
-  const [qrCodeImg, setQrCodeImg] = useState<string>();
   const [auditStatus, setAuditStatus] = useState<string | number>(1); // 1-审核中 2-审核通过 3-审核驳回
 
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const { applyType, id } = router.params;
+
+  const allConfig = useAppSelector((state) => state.genreConfigSlice.allConfig);
 
   useDidShow(() => {
     // 查看进度 获取详情信息
     if (!!id) {
+      Taro.removeStorageSync('editInfo');
       getDetail();
     } else {
-      getConfig();
+      dispatch(setConfig(allConfig[applyType as string]));
     }
-    // 设置
+    // 设置title
     setBarTitle(APPLY_DOCUMENT_TITLE[applyType as string]);
   });
-
-  // 获取配置信息
-  const getConfig = async () => {
-    const res: any = await GetConfig();
-    let obj = {};
-    res.forEach((item: any) => {
-      obj[item.type] = item;
-    });
-    // 获取女性"两癌一筛"的二维码
-    if (applyType === '3') setQrCodeImg(obj[applyType].picPath);
-    setConfig(obj);
-  };
 
   // 获取详情
   const getDetail = async () => {
@@ -225,11 +235,11 @@ export default function Apply() {
       )}
 
       {applyType !== '3' ? (
-        <ContextValue.Provider value={{ applyType, isDetail: !!id, detailInfo, auditStatus, config: config[applyType as string] }}>
+        <ContextValue.Provider value={{ applyType, isDetail: !!id, detailInfo, auditStatus }}>
           <ApplyForm />
         </ContextValue.Provider>
       ) : (
-        <SsgPage qrCodeImg={qrCodeImg} />
+        <SsgPage />
       )}
     </View>
   );

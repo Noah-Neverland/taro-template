@@ -2,8 +2,10 @@ import Taro, { useDidShow } from '@tarojs/taro';
 import { useState, memo, FC } from 'react';
 import { View, Text } from '@tarojs/components';
 import { Empty, Image } from '@antmjs/vantui';
-import { GetBooking } from '@/api/index';
+import { useAppDispatch } from '@/hooks/store';
 import { STATUS_TYPE, APPLY_INFO_ARRAYS, SEX_TYPE } from '@/constants';
+import { setAllConfig, setHospitals, setCommunitys } from '@/redux/reducers/genreConfigSlice';
+import { GetBooking, GetConfig, GetHospital, GetCommunity } from '@/api/index';
 import applyImg from '@/assets/images/home/apply.jpg';
 import './index.less';
 
@@ -35,8 +37,8 @@ const Items: FC<Props> = memo(({ data }) => {
       <View className="home-main-item-content px-4 py-4" onClick={() => toDetail(item)}>
         {APPLY_INFO_ARRAYS.map((childItem: any) => (
           <View className="content" key={`${childItem.field}_${item.id}`}>
-            <Text className="label">{childItem.title}</Text>
-            <Text className="value">{item[childItem.field] || '--'}</Text>
+            <Text className="label">{childItem.title === '申请时间' && item.status !== 1 ? '审核时间' : childItem.title}</Text>
+            <Text className="value">{childItem.field === 'applyTime' && item.status !== 1 ? item['auditTime'] : item[childItem.field] || '--'}</Text>
           </View>
         ))}
       </View>
@@ -47,12 +49,17 @@ const Items: FC<Props> = memo(({ data }) => {
 export default function Home() {
   const [data, setData] = useState<any[]>([]);
 
+  const dispatch = useAppDispatch();
+
   useDidShow(() => {
     try {
       // 判断有无登录
       const Authorization = Taro.getStorageSync('Authorization');
       if (Authorization) {
         getData();
+        getConfig();
+        getCommunity();
+        getHospital();
       } else {
         Taro.redirectTo({ url: '/pages/login/index' });
       }
@@ -67,6 +74,42 @@ export default function Home() {
     if (!res) return false;
     if (!res.length) return toGenre();
     setData(res);
+  };
+
+  // 获取配置信息
+  const getConfig = async () => {
+    const res: any = await GetConfig();
+    let obj = {};
+    res.forEach((item: any) => {
+      obj[item.type] = item;
+    });
+    dispatch(setAllConfig(obj));
+  };
+
+  // 获取社区信息
+  const getCommunity = async () => {
+    const res: any = await GetCommunity();
+    let arr = [];
+    arr = res.map((item: any) => {
+      return {
+        value: item.id,
+        text: item.name,
+      };
+    });
+    dispatch(setCommunitys(arr));
+  };
+
+  // 医院信息
+  const getHospital = async () => {
+    const res: any = await GetHospital();
+    let arr = [];
+    arr = res.map((item: any) => {
+      return {
+        value: item.id,
+        text: item.name,
+      };
+    });
+    dispatch(setHospitals(arr));
   };
 
   // 跳转到选择居民类型的页面

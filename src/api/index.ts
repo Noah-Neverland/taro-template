@@ -13,6 +13,7 @@ enum Api {
   getCommunity = '/taishan-api/booking/getCommunity', // 获取社区
   addBooking = '/taishan-api/booking/addBooking', // 体检预约申请
   getBookingDetail = '/taishan-api/booking/getBookingDetail', // 预约详情
+  getSign = '/taishan-api/booking/getSign', // 获取微信js-sdk授权签名等信息
 }
 
 interface addBookingParams {
@@ -74,4 +75,11 @@ export function AddBooking(data: addBookingParams) {
  */
 export function GetBookingDetail(data: { id: number | string }) {
   return defHttp.get({ url: Api.getBookingDetail, data });
+}
+/**
+ * @name: 获取微信js-sdk授权签名等信息
+ * @return {*}
+ */
+export function GetSign(data: { url: string }) {
+  return defHttp.get({ url: Api.getSign, data });
 }

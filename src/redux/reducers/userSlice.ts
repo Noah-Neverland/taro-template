@@ -1,9 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserInfo {
-  name: string;
-  phone: string | number;
-  role?: string;
+  id: number | undefined;
+  appId: string;
+  headimgurl: string;
+  nickname: string;
+  openid: string;
+  [key: string]: any;
 }
 
 interface UserState {
@@ -12,9 +15,11 @@ interface UserState {
 
 const initialState: UserState = {
   userInfo: {
-    name: 'hss',
-    phone: '18019937008',
-    role: 'admin',
+    id: undefined,
+    appId: '',
+    headimgurl: '',
+    nickname: '',
+    openid: '',
   },
 };
 

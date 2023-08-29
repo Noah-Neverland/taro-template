@@ -3,6 +3,7 @@ import { View, Text, ITouchEvent } from '@tarojs/components';
 import react, { useState } from 'react';
 import { Button, Search, Image } from '@antmjs/vantui';
 import { GetHospital } from '@/api/hospital';
+import WxOpenWxApp from '@/components/WxOpenWxApp';
 import './index.less';
 
 export default function Hospital() {
@@ -11,7 +12,7 @@ export default function Hospital() {
 
   react.useEffect(() => {
     getData();
-  }, [search]);
+  }, []);
 
   // 获取列表数据
   const getData = async () => {
@@ -30,7 +31,7 @@ export default function Hospital() {
   return (
     <View className="hospitals">
       <View className="hospitals-search">
-        <Search shape="round" onSearch={(e: ITouchEvent) => setSearch(e.detail)} onClear={() => setSearch('')} />
+        <Search shape="round" placeholder="请输入搜索关键词" onChange={(e: ITouchEvent) => setSearch(e.detail)} renderAction={<View onClick={getData}>搜索</View>} />
       </View>
       <>
         {data.map((item, index) => (
@@ -47,11 +48,20 @@ export default function Hospital() {
               <View className="hospitals-content-footer-left" onClick={(e) => toOutSide(e, item, 'addressUrl')}>
                 <Text>{item.address || '--'}</Text>
               </View>
-              <View className="hospitals-content-footer-right" onClick={(e) => toOutSide(e, item, 'url')}>
-                <Button type="info" size="small">
-                  去挂号
-                </Button>
-              </View>
+              {item.type === 1 ? (
+                <View className="hospitals-content-footer-right">
+                  <Button type="info" size="small">
+                    去挂号
+                  </Button>
+                  <WxOpenWxApp width={158} height={60} appid={item.url} />
+                </View>
+              ) : (
+                <View className="hospitals-content-footer-right" onClick={(e) => toOutSide(e, item, 'url')}>
+                  <Button type="info" size="small">
+                    去挂号
+                  </Button>
+                </View>
+              )}
             </View>
           </View>
         ))}

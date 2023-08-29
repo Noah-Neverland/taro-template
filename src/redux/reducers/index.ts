@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
+import appSlice from './appSlice';
 import userSlice from './userSlice';
-import countSlice from './countSlice';
+import genreConfigSlice from './genreConfigSlice';
 
-export default combineReducers({ countSlice, userSlice });
+export default combineReducers({ appSlice, userSlice, genreConfigSlice });

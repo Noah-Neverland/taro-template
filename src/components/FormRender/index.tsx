@@ -13,6 +13,7 @@ interface CalendarPropsNew extends CalendarProps {
 
 interface PickerPropsNew extends PickerProps {
   clickable?: boolean;
+  cofirmCallback?: (e: any) => void;
 }
 
 export type IFormBoxItemPropsNew<T> =

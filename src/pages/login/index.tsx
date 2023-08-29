@@ -2,6 +2,8 @@ import { View, Text } from '@tarojs/components';
 import Taro, { useDidShow, useRouter } from '@tarojs/taro';
 import { Icon } from '@antmjs/vantui';
 import { LoginApi } from '@/api/login';
+import { useAppDispatch } from '@/hooks/store';
+import { setUser } from '@/redux/reducers/userSlice';
 
 import './index.less';
 
@@ -9,6 +11,8 @@ export default function Login() {
   const {
     params: { code },
   } = useRouter();
+
+  const dispatch = useAppDispatch();
 
   useDidShow(() => {
     onWXlogin();
@@ -25,6 +29,7 @@ export default function Login() {
         userThird: { openid, id },
       } = res;
       Taro.setStorageSync('Authorization', `${openid}_${id}`);
+      dispatch(setUser(res.userThird));
       Taro.reLaunch({ url: '/pages/index/index' });
     } else {
       wxLogin();

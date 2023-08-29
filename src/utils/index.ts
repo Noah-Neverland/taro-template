@@ -76,7 +76,7 @@ export const IdCard = (card: any, type: number): any => {
       const month = ageDate.getMonth() + 1;
       const day = ageDate.getDate();
       let age = ageDate.getFullYear() - card.substring(6, 10) - 1;
-      if (card.substring(10, 12) < month || (card.substring(10, 12) === month && card.substring(12, 14) <= day)) {
+      if (Number(card.substring(10, 12)) < month || (Number(card.substring(10, 12)) === month && Number(card.substring(12, 14)) <= day)) {
         age++;
       }
       if (age <= 0) {

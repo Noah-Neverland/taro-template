@@ -189,3 +189,12 @@ export function isPc() {
   }
   return flag;
 }
+
+/**
+ * @name: 判断是否是ios系统
+ */
+export const isIOS = () => {
+  const u = navigator.userAgent;
+  if (u.indexOf('iPhone') > -1 || u.indexOf('iOS') > -1) return true;
+  return false;
+};

@@ -1,32 +1,19 @@
 import Taro from '@tarojs/taro';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { View, Text } from '@tarojs/components';
 import { Popup, Dialog, Image } from '@antmjs/vantui';
+import { useAppSelector } from '@/hooks/store';
 import { RADIO_TYPE_OPTIONS } from '@/constants';
 import CNotice from '@/components/CNotice';
-import { GetConfig } from '@/api/index';
 import './index.less';
 
 const ADialog = Dialog.createOnlyDialog();
 
 export default function Genre() {
-  const [config, setConfig] = useState<object>({}); // 配置信息
   const [typeStatus, setTypeStatus] = useState<string | number>(1); // 当前选择的申请类型
   const [close, setClose] = useState<boolean>(false); // 是否关闭体检
 
-  useEffect(() => {
-    getConfig();
-  }, []);
-
-  // 获取配置信息
-  const getConfig = async () => {
-    const res: any = await GetConfig();
-    let obj = {};
-    res.forEach((item: any) => {
-      obj[item.type] = item;
-    });
-    setConfig(obj);
-  };
+  const allConfig = useAppSelector((state) => state.genreConfigSlice.allConfig);
 
   // 预约须知
   const handleClick = (e: any, type: number | string) => {
@@ -47,7 +34,9 @@ export default function Genre() {
   // 跳转申请页面
   const toApply = (type: number) => {
     // 如果当前选择的类型已关闭体检 弹出后台配置的提示公告内容
-    if (config[type].status === 2) return onShowNotice(config[type]);
+    if (allConfig[type].status === 2) return onShowNotice(allConfig[type]);
+    // 跳转之前清除editInfo
+    Taro.removeStorageSync('editInfo');
     // 跳转到预约申请页面
     Taro.navigateTo({ url: `/pages/packageA/apply/index?applyType=${type}` });
   };
@@ -76,7 +65,7 @@ export default function Genre() {
       <ADialog />
       {/* 预约须知 */}
       <Popup show={close} round onClose={() => setClose(false)}>
-        <CNotice content={config[typeStatus]?.remark} setClose={setClose} />
+        <CNotice content={allConfig[typeStatus]?.remark} setClose={setClose} />
       </Popup>
     </View>
   );

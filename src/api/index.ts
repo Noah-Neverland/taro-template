@@ -9,7 +9,6 @@ import { defHttp } from '@/utils/https/request';
 enum Api {
   getConfig = '/taishan-api/config/getConfig', // 获取体检配置信息
   getBooking = '/taishan-api/booking/getBooking', // 获取预约列表
-  getHospital = '/taishan-api/booking/getHospital', // 获取医院列表
   getCommunity = '/taishan-api/booking/getCommunity', // 获取社区
   addBooking = '/taishan-api/booking/addBooking', // 体检预约申请
   getBookingDetail = '/taishan-api/booking/getBookingDetail', // 预约详情
@@ -42,14 +41,6 @@ export function GetBooking() {
  */
 export function GetConfig() {
   return defHttp.get({ url: Api.getConfig });
-}
-
-/**
- * @name: 获取医院列表
- * @return {*}
- */
-export function GetHospital() {
-  return defHttp.get({ url: Api.getHospital });
 }
 
 /**

@@ -1,15 +1,23 @@
 .hospitals {
   box-sizing: border-box;
+  padding-top: 210px;
   &-search {
-    .nut-searchbar__content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    z-index: 99999;
+    box-shadow: 0 0px 10px 0 #d5d7da;
+    .van-search__content {
       /* prettier-ignore */
       border: 1Px solid @main-color;
       border-radius: 12px;
+      background-color: white;
     }
   }
   &-content {
     margin: 20px;
-    height: 180px;
     background-color: white;
     border-radius: 20px;
     padding: 30px 24px 20px 24px;

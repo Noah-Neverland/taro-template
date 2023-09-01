@@ -10,6 +10,8 @@ export const PackageARouters = {
 
 export const PackageBRouters = {
   '/pages/packageB/hospitals/index': '/hospitals',
+  '/pages/packageB/hospitalDetail/index': '/hospitalDetail',
+  '/pages/packageB/specialissts/index': '/specialissts',
 };
 
 // h5路由转换

@@ -1,0 +1,173 @@
+.hDetail {
+  position: relative;
+  box-sizing: border-box;
+  padding: 111px 20px 20px 20px;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 750px;
+    height: 230px;
+    background: linear-gradient(149deg, #d4f0ff 0%, #8dd1ff 100%);
+    z-index: 1;
+  }
+  &-info {
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+    border-radius: 20px;
+    width: 100% !important;
+    padding: 100px 32px 28px 32px;
+    box-shadow: 0px 0px 10px 0px #d5d7da;
+    &-logo {
+      position: absolute;
+      top: -31px;
+      left: 36px;
+      width: 120px;
+      height: 120px;
+      box-shadow: 0px 0px 10px 0px #d5d7da;
+      overflow: hidden;
+      border-radius: 20px;
+      background-color: white;
+    }
+    &-title {
+      font-size: 46px;
+      font-weight: bold;
+    }
+    &-introduce {
+      position: relative;
+      color: #647288;
+      font-size: 26px;
+      margin: 20px 0;
+      word-break: break-all;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2; /* 这里是超出几行省略 */
+      overflow: hidden;
+      &-more {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: @main-color;
+        background: white;
+        z-index: 999;
+        display: block;
+        width: 330px;
+        mask: linear-gradient(90deg, transparent, #000 70%);
+        text-align: right;
+      }
+    }
+    &-feature {
+      box-sizing: border-box;
+      width: 100%;
+      height: 70px;
+      line-height: 70px;
+      border-radius: 16px;
+      color: #647288;
+      padding: 0 12px 0 60px;
+      background: url('../../../assets/images/hospital/hospital_icon_01.png') no-repeat 16px center;
+      background-size: 5%;
+      background-color: #e0f4f4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  &-specialisst {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 32px;
+    background: linear-gradient(#eff9ff, #ffffff);
+    box-shadow: 0px 0px 10px 0px #d5d7da;
+    &-content {
+      margin-top: 20px;
+    }
+  }
+  &-footer {
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0px 0px 10px 0px #d5d7da;
+    &-address {
+      font-size: 28px;
+      color: @gray-01;
+      padding-left: 58px;
+      background: url('../../../assets/images/comoon/map_icon_01.png') no-repeat left center;
+      background-size: contain;
+    }
+    &-button {
+      position: relative;
+      .van-button--small {
+        width: 100%;
+        height: 82px;
+        font-size: 32px;
+      }
+    }
+  }
+}
+
+.popupIntroduce {
+  padding: 28px 50px;
+  &-title {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  &-content {
+    overflow-y: scroll;
+    max-height: 60vh;
+    &-feature {
+      &-title {
+        display: block;
+        position: relative;
+        padding-left: 40px;
+        &::after {
+          content: '';
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          margin-top: -6px;
+          width: 12px;
+          height: 12px;
+          border-radius: 18px;
+          background: @main-color;
+          box-shadow: 0px 0px 10px 1px @main-color;
+        }
+      }
+      &-main {
+        font-size: 26px;
+        color: #647288;
+        margin: 20px 0;
+      }
+    }
+    &-int {
+      &-title {
+        display: block;
+        position: relative;
+        padding-left: 40px;
+        &::after {
+          content: '';
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          margin-top: -6px;
+          width: 12px;
+          height: 12px;
+          border-radius: 18px;
+          background: #61c083;
+          box-shadow: 0px 0px 10px 1px #61c083;
+        }
+      }
+      &-main {
+        font-size: 26px;
+        color: #647288;
+        text-indent: 52px;
+      }
+    }
+  }
+}

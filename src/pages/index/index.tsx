@@ -5,7 +5,8 @@ import { Empty, Image } from '@antmjs/vantui';
 import { useAppDispatch } from '@/hooks/store';
 import { STATUS_TYPE, APPLY_INFO_ARRAYS, SEX_TYPE } from '@/constants';
 import { setAllConfig, setHospitals, setCommunitys } from '@/redux/reducers/genreConfigSlice';
-import { GetBooking, GetConfig, GetHospital, GetCommunity } from '@/api/index';
+import { GetBooking, GetConfig, GetCommunity } from '@/api/index';
+import { GetHospital } from '@/api/hospital';
 import applyImg from '@/assets/images/home/apply.jpg';
 import './index.less';
 

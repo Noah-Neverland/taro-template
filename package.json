@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "{{ description }}",
+  "author": "{{ author }}",
   "templateInfo": {
     "name": "default",
     "typescript": true,
@@ -33,12 +34,6 @@
     "prepare": "husky install",
     "preinstall": "npx only-allow pnpm"
   },
-  "browserslist": [
-    "last 3 versions",
-    "Android >= 4.1",
-    "ios >= 8"
-  ],
-  "author": "{{ author }}",
   "dependencies": {
     "@antmjs/vantui": "^3.1.5",
     "@babel/preset-env": "^7.22.10",
@@ -124,5 +119,10 @@
       "npm run lint:script",
       "git add ."
     ]
-  }
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ]
 }

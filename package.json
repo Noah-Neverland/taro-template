@@ -1,8 +1,8 @@
 {
-  "name": "taishan-street",
+  "name": "{{ name }}",
   "version": "1.0.0",
   "private": true,
-  "description": "泰山街道",
+  "description": "{{ description }}",
   "templateInfo": {
     "name": "default",
     "typescript": true,
@@ -38,7 +38,7 @@
     "Android >= 4.1",
     "ios >= 8"
   ],
-  "author": "hss",
+  "author": "{{ author }}",
   "dependencies": {
     "@antmjs/vantui": "^3.1.5",
     "@babel/preset-env": "^7.22.10",
